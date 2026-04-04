@@ -4,18 +4,18 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
-  <meta name="title" content="PLUME: Latent Reasoning for Universal Multi-modal Embedding">
-  <meta name="description" content="PLUME is a latent reasoning pipeline for vision-language model embedding, featuring Mixture-of-Experts transition layers for multi-modal understanding.">
-  <meta name="keywords" content="PLUME, latent reasoning, VLM, embedding, multi-modal, Mixture-of-Experts, Qwen2-VL">
+  <meta name="title" content="PLUME: Latent Reasoning Based Universal Multimodal Embedding">
+  <meta name="description" content="PLUME is a latent reasoning framework that advances universal multimodal embedding by replacing verbalized CoT with a short autoregressive rollout of continuous latent states.">
+  <meta name="keywords" content="PLUME, latent reasoning, VLM, embedding, multi-modal, Mixture-of-Experts, Qwen2-VL, universal multimodal embedding, UME, MMEB">
   <meta name="robots" content="index, follow">
   <meta name="language" content="English">
 
   <meta property="og:type" content="article">
-  <meta property="og:title" content="PLUME: Latent Reasoning for Universal Multi-modal Embedding">
-  <meta property="og:description" content="PLUME is a latent reasoning pipeline for vision-language model embedding with Latent MoE transition layers.">
+  <meta property="og:title" content="PLUME: Latent Reasoning Based Universal Multimodal Embedding">
+  <meta property="og:description" content="PLUME replaces explicit chain-of-thought with compact latent rollout for universal multimodal embedding, achieving 30x faster inference.">
   <meta property="og:url" content="https://haoxiangzhao12138.github.io/PLUME/">
 
-  <title>PLUME: Latent Reasoning for Universal Multi-modal Embedding</title>
+  <title>PLUME: Latent Reasoning Based Universal Multimodal Embedding</title>
 
   <link rel="icon" type="image/x-icon" href="static/images/favicon.ico">
   <link rel="stylesheet" href="static/css/bulma.min.css">
@@ -45,29 +45,40 @@
       <div class="container is-max-desktop">
         <div class="columns is-centered">
           <div class="column has-text-centered">
-            <h1 class="title is-1 publication-title">PLUME: Latent Reasoning for Universal Multi-modal Embedding</h1>
+            <h1 class="title is-1 publication-title">PLUME: Latent Reasoning Based Universal Multimodal Embedding</h1>
             <div class="is-size-5 publication-authors">
-              <!-- TODO: Replace with actual author names and links -->
               <span class="author-block">
-                <a href="#" target="_blank">Author 1</a><sup>*</sup>,</span>
+                Chenwei He<sup>1*</sup>,</span>
               <span class="author-block">
-                <a href="#" target="_blank">Author 2</a><sup>*</sup>,</span>
+                Xiangzhao Hao<sup>2,3*</sup>,</span>
               <span class="author-block">
-                <a href="#" target="_blank">Author 3</a></span>
+                Tianyu Yang<sup>2,3*</sup>,</span>
+              <span class="author-block">
+                Yuxiang Ma<sup>1</sup>,</span>
+              <span class="author-block">
+                Yuheng Jia<sup>1</sup>,</span>
+              <span class="author-block">
+                Lingxiang Wu<sup>2,3</sup>,</span>
+              <span class="author-block">
+                Chaoyang Zhao<sup>2,3</sup>,</span>
+              <span class="author-block">
+                Haiyun Guo<sup>2,3&dagger;</sup>,</span>
+              <span class="author-block">
+                Jinqiao Wang<sup>2,3</sup></span>
             </div>
 
             <div class="is-size-5 publication-authors">
-              <!-- TODO: Replace with actual institution -->
-              <span class="author-block">Institution Name<br>2025</span>
-              <span class="eql-cntrb"><small><br><sup>*</sup>Indicates Equal Contribution</small></span>
+              <span class="author-block"><sup>1</sup>Southeast University</span>
+              <span class="author-block"><sup>2</sup>Institute of Automation, Chinese Academy of Sciences</span>
+              <span class="author-block"><sup>3</sup>University of Chinese Academy of Sciences</span>
+              <span class="eql-cntrb"><small><br><sup>*</sup>Equal Contribution &nbsp; <sup>&dagger;</sup>Corresponding Author</small></span>
             </div>
 
             <div class="column has-text-centered">
               <div class="publication-links">
                 <!-- ArXiv Link -->
-                <!-- TODO: Replace with actual arXiv ID -->
                 <span class="link-block">
-                  <a href="#" target="_blank"
+                  <a href="https://arxiv.org/abs/submit/7436445" target="_blank"
                   class="external-link button is-normal is-rounded is-dark">
                   <span class="icon">
                     <i class="fas fa-file-pdf"></i>
@@ -118,6 +129,23 @@
 </section>
 
 
+<!-- Accuracy-Efficiency Tradeoff (Figure 1) -->
+<section class="hero is-small">
+  <div class="hero-body">
+    <div class="container is-max-desktop">
+      <div class="columns is-centered has-text-centered">
+        <div class="column is-four-fifths">
+          <img src="static/images/tradeoff.png" alt="PLUME achieves a favorable accuracy-efficiency tradeoff on MMEB-v2" loading="lazy" style="max-width:100%;"/>
+          <p class="has-text-centered is-size-6" style="margin-top:0.5rem; color:#666;">
+            <b>Figure 1.</b> PLUME achieves a favorable accuracy&ndash;efficiency tradeoff on MMEB-v2. The x-axis shows inference throughput on a single H20 GPU and the y-axis shows average MMEB-v2 performance.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
 <!-- Paper abstract -->
 <section class="section hero is-light">
   <div class="container is-max-desktop">
@@ -125,12 +153,8 @@
       <div class="column is-four-fifths">
         <h2 class="title is-3">Abstract</h2>
         <div class="content has-text-justified">
-          <!-- TODO: Replace with actual abstract -->
           <p>
-            We present <b>PLUME</b>, a latent reasoning framework for training universal multi-modal embedding models.
-            PLUME introduces a <b>Latent Mixture-of-Experts (MoE) transition layer</b> that enables vision-language models to perform implicit reasoning in a continuous latent space, rather than relying on explicit chain-of-thought token generation.
-            This approach allows the model to develop richer representations for complex multi-modal understanding tasks including image retrieval, video understanding, and visual document comprehension.
-            Built upon Qwen2-VL-2B, PLUME achieves strong performance on the MMEB benchmark across image, video, and visual document modalities, demonstrating the effectiveness of latent reasoning for multi-modal embedding.
+            Universal multimodal embedding (UME) maps heterogeneous inputs into a shared retrieval space with a single model. Recent approaches improve UME by generating explicit chain-of-thought (CoT) rationales before extracting embeddings, enabling multimodal large language models to better infer complex query intent. However, explicit CoT incurs substantial inference overhead and can compress rich multimodal evidence into a narrow textual bottleneck. We propose <b>PLUME</b>, a latent reasoning framework that advances UME by replacing verbalized CoT with a short autoregressive rollout of continuous latent states. To support diverse multimodal queries, PLUME further introduces a <b>semantic-anchor-guided transition adapter</b> that steers latent rollout along different reasoning trajectories under the same fixed computation budget. To stabilize training, PLUME adopts a <b>progressive explicit-to-latent curriculum</b> that uses verbalized reasoning only as a temporary training scaffold and gradually transfers this behavior into hidden-state computation, eliminating explicit CoT at inference. On the 78-task MMEB-v2 benchmark, PLUME outperforms strong explicit-CoT UME baselines while reducing reasoning from hundreds of generated tokens to fewer than 10 latent steps, delivering <b>over 30&times; faster inference</b>. PLUME is especially well suited to retrieval settings where relevant evidence is dense, structurally complex, and difficult to organize through verbalized intermediate rationales, such as video and visual document retrieval.
           </p>
         </div>
       </div>
@@ -138,6 +162,23 @@
   </div>
 </section>
 <!-- End paper abstract -->
+
+
+<!-- Paradigm Comparison (Figure 2) -->
+<section class="hero is-small">
+  <div class="hero-body">
+    <div class="container is-max-desktop">
+      <div class="columns is-centered has-text-centered">
+        <div class="column">
+          <img src="static/images/intro.png" alt="Comparison of three universal multimodal embedding paradigms" loading="lazy" style="max-width:100%;"/>
+          <p class="has-text-centered is-size-6" style="margin-top:0.5rem; color:#666;">
+            <b>Figure 2.</b> Comparison of three universal multimodal embedding paradigms. <b>Left:</b> single-pass encoding. <b>Middle:</b> explicit CoT UME generates long textual traces before embedding extraction. <b>Right:</b> PLUME internalizes reasoning into a compact latent rollout with semantic-anchor-guided expert routing.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
 
 
 <!-- Method Overview -->
@@ -149,13 +190,19 @@
         <div class="column is-four-fifths">
           <div class="content has-text-justified">
             <p>
-              PLUME extends standard vision-language models with a <b>Latent MoE Transition</b> mechanism.
-              Instead of generating explicit reasoning tokens, the model processes latent thought tokens through a mixture-of-experts layer consisting of 4 routed experts and 1 shared expert.
-              A curriculum learning strategy progressively increases the number of latent reasoning steps during training, enabling the model to develop increasingly sophisticated reasoning capabilities.
+              PLUME is a progressive latent reasoning framework for universal multimodal embedding. It replaces explicit reasoning tokens with a short <b>latent rollout</b>, adapts each latent transition with a <b>semantic-anchor-guided transition adapter</b>, and transfers explicit reasoning into hidden-space computation through a <b>progressive curriculum</b>.
+            </p>
+            <p>
+              Starting from a multimodal prefix, PLUME replaces explicit CoT decoding with a compact latent rollout inside the backbone. The model performs several latent transitions before extracting the final retrieval embedding from the hidden state at the &lt;gen&gt; token. The semantic-anchor-guided transition adapter routes each latent step through shared and specialized experts using a Mixture-of-Experts architecture, while the progressive explicit-to-latent curriculum gradually rewrites explicit reasoning segments into latent blocks across training stages.
+            </p>
+            <p>
+              The transition adapter contains one shared expert that captures broadly useful transition patterns, plus specialized experts from which the router selects the top-K<sub>r</sub>. Routing is conditioned on a semantic anchor extracted from the input, providing a fixed global signal that stabilizes expert selection against the rapidly evolving latent state.
             </p>
           </div>
-          <!-- TODO: Add method figure here -->
-          <!-- <img src="static/images/method.png" alt="PLUME method overview" loading="lazy"/> -->
+          <img src="static/images/method.png" alt="PLUME method overview" loading="lazy" style="max-width:100%; margin-top:1rem;"/>
+          <p class="has-text-centered is-size-6" style="margin-top:0.5rem; color:#666;">
+            <b>Figure 3.</b> Overview of PLUME. The bottom panel illustrates the latent rollout process. The top-left panel expands the semantic-anchor-guided transition adapter with shared and specialized experts. The top-right panel shows the progressive explicit-to-latent curriculum.
+          </p>
         </div>
       </div>
     </div>
@@ -164,36 +211,109 @@
 <!-- End Method Overview -->
 
 
-<!-- Results -->
+<!-- Contributions -->
 <section class="section hero is-light">
   <div class="hero-body">
     <div class="container is-max-desktop">
-      <h2 class="title is-3 has-text-centered">Results</h2>
+      <h2 class="title is-3 has-text-centered">Contributions</h2>
       <div class="columns is-centered">
         <div class="column is-four-fifths">
           <div class="content">
-            <p>PLUME achieves competitive results on the MMEB benchmark across multiple modalities:</p>
+            <ul>
+              <li><b>A latent reasoning framework for UME.</b> We introduce PLUME to internalize intermediate reasoning into a short continuous latent process for UME, replacing costly explicit chain-of-thought generation while preserving the benefits of intermediate computation.</li>
+              <li><b>An input-adaptive latent reasoning architecture.</b> We design a semantic-anchor-guided transition adapter that allocates latent computation adaptively across heterogeneous multimodal queries, allowing the same compact rollout budget to support different reasoning patterns for images, videos, documents, and text.</li>
+              <li><b>Strong empirical gains in both effectiveness and efficiency.</b> We show that latent reasoning can advance UME beyond explicit-CoT baselines, achieving stronger retrieval performance on MMEB-v2 while reducing reasoning from hundreds of generated tokens to fewer than ten latent steps and delivering over 30&times; faster inference, with particularly strong gains on video and visual document retrieval.</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+<!-- End Contributions -->
+
+
+<!-- Results -->
+<section class="hero is-small">
+  <div class="hero-body">
+    <div class="container is-max-desktop">
+      <h2 class="title is-3 has-text-centered">Main Results on MMEB-v2</h2>
+      <div class="columns is-centered">
+        <div class="column">
+          <div class="content">
+            <p>All methods share the same Qwen2-VL-2B backbone. Best and second-best results are highlighted in <b>bold</b> and <u>underline</u>.</p>
+            <div class="table-container">
             <table class="table is-bordered is-striped is-hoverable is-fullwidth">
               <thead>
                 <tr>
-                  <th>Modality</th>
-                  <th>Benchmark</th>
-                  <th>Metric</th>
-                  <th>PLUME</th>
+                  <th rowspan="2">Model</th>
+                  <th rowspan="2">Venue</th>
+                  <th colspan="5">Image</th>
+                  <th colspan="5">Video</th>
+                  <th colspan="5">VisDoc</th>
+                  <th rowspan="2">All</th>
+                </tr>
+                <tr>
+                  <th>CLS</th><th>QA</th><th>RET</th><th>GD</th><th>Overall</th>
+                  <th>CLS</th><th>QA</th><th>RET</th><th>MRET</th><th>Overall</th>
+                  <th>VDRv1</th><th>VDRv2</th><th>VR</th><th>OOD</th><th>Overall</th>
                 </tr>
               </thead>
               <tbody>
+                <tr><td colspan="18" style="text-align:center; font-weight:bold; background:#f0f0f0;">Early UME Baselines</td></tr>
                 <tr>
-                  <td>Image</td>
-                  <td>ImageNet-1K</td>
-                  <td>Hit@1</td>
-                  <td><b>0.735</b></td>
+                  <td>LamRA</td><td>CVPR'25</td>
+                  <td>59.2</td><td>26.5</td><td>70.0</td><td>62.7</td><td>54.1</td>
+                  <td>39.3</td><td>42.6</td><td>24.3</td><td>34.6</td><td>35.2</td>
+                  <td>22.0</td><td>11.5</td><td>37.4</td><td>21.0</td><td>23.9</td>
+                  <td>40.4</td>
                 </tr>
-                <!-- TODO: Add more results rows -->
+                <tr>
+                  <td>VLM2Vec</td><td>ICLR'25</td>
+                  <td>58.7</td><td>49.3</td><td>65.0</td><td>72.9</td><td>59.7</td>
+                  <td>33.4</td><td>30.5</td><td>20.6</td><td>33.0</td><td>29.0</td>
+                  <td>49.8</td><td>13.5</td><td>51.8</td><td>33.5</td><td>41.6</td>
+                  <td>47.0</td>
+                </tr>
+                <tr>
+                  <td>GME</td><td>CVPR'25</td>
+                  <td>54.4</td><td>29.9</td><td>66.9</td><td>55.5</td><td>51.9</td>
+                  <td>34.9</td><td>42.0</td><td>25.6</td><td>32.4</td><td>33.9</td>
+                  <td>86.1</td><td>54.0</td><td>82.5</td><td>43.1</td><td>72.7</td>
+                  <td>54.1</td>
+                </tr>
+                <tr>
+                  <td>VLM2Vec-V2</td><td>TMLR'26</td>
+                  <td>62.0</td><td>56.3</td><td>69.5</td><td>77.3</td><td><u>64.9</u></td>
+                  <td>39.3</td><td>34.3</td><td>28.8</td><td>38.5</td><td>34.9</td>
+                  <td>75.5</td><td>44.9</td><td>79.4</td><td>39.4</td><td>65.4</td>
+                  <td>58.0</td>
+                </tr>
+                <tr>
+                  <td>DUME</td><td>ICLR'26</td>
+                  <td>59.3</td><td>55.0</td><td>66.3</td><td>78.0</td><td>62.5</td>
+                  <td>37.7</td><td>46.6</td><td>17.1</td><td>30.0</td><td>33.2</td>
+                  <td>67.6</td><td>43.3</td><td>47.1</td><td>33.8</td><td>52.8</td>
+                  <td>52.7</td>
+                </tr>
+                <tr><td colspan="18" style="text-align:center; font-weight:bold; background:#f0f0f0;">Reasoning UME</td></tr>
+                <tr>
+                  <td>UME-R1</td><td>ICLR'26</td>
+                  <td>64.8</td><td><b>62.8</b></td><td><u>67.6</u></td><td>77.2</td><td><b>66.6</b></td>
+                  <td><u>44.3</u></td><td><u>51.2</u></td><td><u>32.9</u></td><td>39.7</td><td><u>42.2</u></td>
+                  <td><u>72.4</u></td><td><u>46.2</u></td><td><u>79.2</u></td><td>37.2</td><td><u>63.9</u></td>
+                  <td><u>60.1</u></td>
+                </tr>
+                <tr style="background:#e8f5e9;">
+                  <td><b>PLUME</b></td><td>Ours</td>
+                  <td><b>66.5</b></td><td><u>59.2</u></td><td><b>67.6</b></td><td><b>79.7</b></td><td><u>66.3</u></td>
+                  <td><b>45.0</b></td><td><b>52.3</b></td><td><b>33.5</b></td><td><b>46.7</b></td><td><b>44.1</b></td>
+                  <td><b>72.1</b></td><td><b>49.8</b></td><td><b>78.1</b></td><td><b>57.4</b></td><td><b>67.5</b></td>
+                  <td><b>61.6</b></td>
+                </tr>
               </tbody>
             </table>
-            <!-- TODO: Add results figure here -->
-            <!-- <img src="static/images/results.png" alt="PLUME results" loading="lazy"/> -->
+            </div>
           </div>
         </div>
       </div>
@@ -201,6 +321,217 @@
   </div>
 </section>
 <!-- End Results -->
+
+
+<!-- Per-task Comparison (Figure 4 - Radar) -->
+<section class="section hero is-light">
+  <div class="hero-body">
+    <div class="container is-max-desktop">
+      <h2 class="title is-3 has-text-centered">Per-task Performance Comparison</h2>
+      <div class="columns is-centered has-text-centered">
+        <div class="column is-three-fifths">
+          <img src="static/images/radar.png" alt="Per-task performance comparison on MMEB-v2" loading="lazy" style="max-width:100%;"/>
+          <p class="has-text-centered is-size-6" style="margin-top:0.5rem; color:#666;">
+            <b>Figure 4.</b> Per-task performance comparison on MMEB-v2. PLUME consistently outperforms UME-R1 and single-pass baselines across most sub-tasks.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- Efficiency -->
+<section class="section hero is-light">
+  <div class="hero-body">
+    <div class="container is-max-desktop">
+      <h2 class="title is-3 has-text-centered">Inference Efficiency</h2>
+      <div class="columns is-centered">
+        <div class="column is-four-fifths">
+          <div class="content">
+            <p>Measured on a single NVIDIA H20 GPU:</p>
+            <table class="table is-bordered is-striped is-hoverable is-fullwidth">
+              <thead>
+                <tr>
+                  <th>Metric</th>
+                  <th>PLUME</th>
+                  <th>UME-R1</th>
+                  <th>VLM2Vec-V2</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Reasoning tokens/steps</td>
+                  <td><b>8</b></td>
+                  <td>403</td>
+                  <td>0</td>
+                </tr>
+                <tr>
+                  <td>Latency (ms/sample)</td>
+                  <td><b>298&plusmn;12</b></td>
+                  <td>9023&plusmn;187</td>
+                  <td>156&plusmn;8</td>
+                </tr>
+                <tr>
+                  <td>Throughput (samples/s)</td>
+                  <td><b>3.3&plusmn;0.1</b></td>
+                  <td>0.11&plusmn;0.01</td>
+                  <td>6.4&plusmn;0.3</td>
+                </tr>
+                <tr>
+                  <td>Speedup vs. UME-R1</td>
+                  <td><b>30.3&times;</b></td>
+                  <td>1.0&times;</td>
+                  <td>&ndash;</td>
+                </tr>
+                <tr>
+                  <td>Overhead vs. VLM2Vec-V2</td>
+                  <td>1.9&times;</td>
+                  <td>&ndash;</td>
+                  <td>1.0&times;</td>
+                </tr>
+              </tbody>
+            </table>
+            <p>
+              PLUME compresses reasoning from an average of 403 generated tokens (UME-R1) to 8 latent steps, reducing per-sample latency from 9023 ms to 298 ms&mdash;a <b>30.3&times; speedup</b>. Compared with the single-pass baseline VLM2Vec-V2 (156 ms), PLUME adds less than 150 ms of overhead yet improves overall accuracy by 2.1 points.
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+<!-- End Efficiency -->
+
+
+<!-- Ablation -->
+<section class="hero is-small">
+  <div class="hero-body">
+    <div class="container is-max-desktop">
+      <h2 class="title is-3 has-text-centered">Ablation Studies</h2>
+      <div class="columns is-centered">
+        <div class="column is-four-fifths">
+          <div class="content">
+            <h4>Component Ablation</h4>
+            <table class="table is-bordered is-striped is-hoverable is-fullwidth">
+              <thead>
+                <tr>
+                  <th>Configuration</th>
+                  <th>Image</th>
+                  <th>Video</th>
+                  <th>VisDoc</th>
+                  <th>All</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr style="background:#e8f5e9;">
+                  <td><b>Full PLUME</b></td>
+                  <td><b>66.3</b></td>
+                  <td><b>44.1</b></td>
+                  <td><b>67.5</b></td>
+                  <td><b>61.6</b></td>
+                </tr>
+                <tr>
+                  <td>w/o Latent Transition</td>
+                  <td>63.6</td>
+                  <td>41.0</td>
+                  <td>64.8</td>
+                  <td>58.8</td>
+                </tr>
+                <tr>
+                  <td>w/o MoE (single MLP)</td>
+                  <td>64.2</td>
+                  <td>41.8</td>
+                  <td>64.4</td>
+                  <td>59.2</td>
+                </tr>
+                <tr>
+                  <td>w/o Semantic Anchor</td>
+                  <td>65.4</td>
+                  <td>42.3</td>
+                  <td>66.1</td>
+                  <td>60.1</td>
+                </tr>
+                <tr>
+                  <td>w/o Curriculum</td>
+                  <td>60.2</td>
+                  <td>36.5</td>
+                  <td>60.2</td>
+                  <td>54.8</td>
+                </tr>
+              </tbody>
+            </table>
+
+            <h4>Effect of Latent Steps K</h4>
+            <table class="table is-bordered is-striped is-hoverable is-fullwidth">
+              <thead>
+                <tr>
+                  <th>K</th>
+                  <th>Image</th>
+                  <th>Video</th>
+                  <th>VisDoc</th>
+                  <th>All</th>
+                  <th>Latency (ms)</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>4</td>
+                  <td>64.3</td>
+                  <td>43.3</td>
+                  <td>65.7</td>
+                  <td>59.9</td>
+                  <td>232</td>
+                </tr>
+                <tr>
+                  <td>6</td>
+                  <td>65.9</td>
+                  <td>43.6</td>
+                  <td>66.7</td>
+                  <td>61.1</td>
+                  <td>268</td>
+                </tr>
+                <tr style="background:#e8f5e9;">
+                  <td><b>8</b></td>
+                  <td><b>66.3</b></td>
+                  <td><b>44.1</b></td>
+                  <td><b>67.5</b></td>
+                  <td><b>61.6</b></td>
+                  <td>300</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+<!-- End Ablation -->
+
+
+<!-- Diagnostic Analysis -->
+<section class="section hero is-light">
+  <div class="hero-body">
+    <div class="container is-max-desktop">
+      <h2 class="title is-3 has-text-centered">Diagnostic Analysis</h2>
+      <div class="columns is-centered">
+        <div class="column is-half has-text-centered">
+          <img src="static/images/expert_heatmap.png" alt="Expert activation heatmap" loading="lazy" style="max-width:100%;"/>
+          <p class="has-text-centered is-size-6" style="margin-top:0.5rem; color:#666;">
+            <b>Figure 5.</b> Activation preferences of specialized experts across image and video retrieval sub-tasks.
+          </p>
+        </div>
+        <div class="column is-half has-text-centered">
+          <img src="static/images/trajectory.png" alt="Latent trajectory visualization" loading="lazy" style="max-width:100%;"/>
+          <p class="has-text-centered is-size-6" style="margin-top:0.5rem; color:#666;">
+            <b>Figure 6.</b> Average cosine similarity between intermediate states and the positive target. PLUME shows a smoother trajectory with consistently smaller variance than UME-R1.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
 
 
 <!--BibTex citation -->
@@ -213,12 +544,11 @@
         <span class="copy-text">Copy</span>
       </button>
     </div>
-    <!-- TODO: Replace with actual BibTeX -->
-    <pre id="bibtex-code"><code>@article{plume2025,
-  title={PLUME: Latent Reasoning for Universal Multi-modal Embedding},
-  author={Author1 and Author2 and Author3},
-  year={2025},
-  url={https://github.com/haoxiangzhao12138/PLUME}
+    <pre id="bibtex-code"><code>@article{he2026plume,
+  title={PLUME: Latent Reasoning Based Universal Multimodal Embedding},
+  author={He, Chenwei and Hao, Xiangzhao and Yang, Tianyu and Ma, Yuxiang and Jia, Yuheng and Wu, Lingxiang and Zhao, Chaoyang and Guo, Haiyun and Wang, Jinqiao},
+  journal={arXiv preprint arXiv:submit/7436445},
+  year={2026}
 }</code></pre>
   </div>
 </section>
