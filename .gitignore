@@ -1,0 +1,10 @@
+model_release/
+output/
+eval_log/
+__pycache__/
+*.pyc
+*.pyo
+*.egg-info/
+.claude/
+wandb/
+*.log
