@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <meta name="title" content="PLUME: Latent Reasoning for Universal Multi-modal Embedding">
+  <meta name="description" content="PLUME is a latent reasoning pipeline for vision-language model embedding, featuring Mixture-of-Experts transition layers for multi-modal understanding.">
+  <meta name="keywords" content="PLUME, latent reasoning, VLM, embedding, multi-modal, Mixture-of-Experts, Qwen2-VL">
+  <meta name="robots" content="index, follow">
+  <meta name="language" content="English">
+
+  <meta property="og:type" content="article">
+  <meta property="og:title" content="PLUME: Latent Reasoning for Universal Multi-modal Embedding">
+  <meta property="og:description" content="PLUME is a latent reasoning pipeline for vision-language model embedding with Latent MoE transition layers.">
+  <meta property="og:url" content="https://haoxiangzhao12138.github.io/PLUME/">
+
+  <title>PLUME: Latent Reasoning for Universal Multi-modal Embedding</title>
+
+  <link rel="icon" type="image/x-icon" href="static/images/favicon.ico">
+  <link rel="stylesheet" href="static/css/bulma.min.css">
+  <link rel="stylesheet" href="static/css/index.css">
+  <link rel="preload" href="static/css/bulma-carousel.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+  <link rel="preload" href="static/css/bulma-slider.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+  <link rel="preload" href="static/css/fontawesome.all.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+  <link rel="preload" href="https://cdn.jsdelivr.net/gh/jpswalsh/academicons@1/css/academicons.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+  <noscript>
+    <link rel="stylesheet" href="static/css/bulma-carousel.min.css">
+    <link rel="stylesheet" href="static/css/bulma-slider.min.css">
+    <link rel="stylesheet" href="static/css/fontawesome.all.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/jpswalsh/academicons@1/css/academicons.min.css">
+  </noscript>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <script defer src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <script defer src="static/js/fontawesome.all.min.js"></script>
+  <script defer src="static/js/bulma-carousel.min.js"></script>
+  <script defer src="static/js/bulma-slider.min.js"></script>
+  <script defer src="static/js/index.js"></script>
+</head>
+<body>
+
+  <main id="main-content">
+  <section class="hero">
+    <div class="hero-body">
+      <div class="container is-max-desktop">
+        <div class="columns is-centered">
+          <div class="column has-text-centered">
+            <h1 class="title is-1 publication-title">PLUME: Latent Reasoning for Universal Multi-modal Embedding</h1>
+            <div class="is-size-5 publication-authors">
+              <!-- TODO: Replace with actual author names and links -->
+              <span class="author-block">
+                <a href="#" target="_blank">Author 1</a><sup>*</sup>,</span>
+              <span class="author-block">
+                <a href="#" target="_blank">Author 2</a><sup>*</sup>,</span>
+              <span class="author-block">
+                <a href="#" target="_blank">Author 3</a></span>
+            </div>
+
+            <div class="is-size-5 publication-authors">
+              <!-- TODO: Replace with actual institution -->
+              <span class="author-block">Institution Name<br>2025</span>
+              <span class="eql-cntrb"><small><br><sup>*</sup>Indicates Equal Contribution</small></span>
+            </div>
+
+            <div class="column has-text-centered">
+              <div class="publication-links">
+                <!-- ArXiv Link -->
+                <!-- TODO: Replace with actual arXiv ID -->
+                <span class="link-block">
+                  <a href="#" target="_blank"
+                  class="external-link button is-normal is-rounded is-dark">
+                  <span class="icon">
+                    <i class="fas fa-file-pdf"></i>
+                  </span>
+                  <span>Paper</span>
+                </a>
+              </span>
+
+              <!-- GitHub Link -->
+              <span class="link-block">
+                <a href="https://github.com/haoxiangzhao12138/PLUME" target="_blank"
+                class="external-link button is-normal is-rounded is-dark">
+                <span class="icon">
+                  <i class="fab fa-github"></i>
+                </span>
+                <span>Code</span>
+              </a>
+            </span>
+
+            <!-- Model Link -->
+            <span class="link-block">
+              <a href="https://huggingface.co/CUDAOUTOFMEMORY/PLUME-Qwen2-VL-2B" target="_blank"
+              class="external-link button is-normal is-rounded is-dark">
+              <span class="icon">
+                <i class="fas fa-cube"></i>
+              </span>
+              <span>Model</span>
+            </a>
+          </span>
+
+            <!-- Dataset Link -->
+            <span class="link-block">
+              <a href="https://huggingface.co/datasets/zhibinlan/UME-sft-train" target="_blank"
+              class="external-link button is-normal is-rounded is-dark">
+              <span class="icon">
+                <i class="fas fa-database"></i>
+              </span>
+              <span>Dataset</span>
+            </a>
+          </span>
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</section>
+
+
+<!-- Paper abstract -->
+<section class="section hero is-light">
+  <div class="container is-max-desktop">
+    <div class="columns is-centered has-text-centered">
+      <div class="column is-four-fifths">
+        <h2 class="title is-3">Abstract</h2>
+        <div class="content has-text-justified">
+          <!-- TODO: Replace with actual abstract -->
+          <p>
+            We present <b>PLUME</b>, a latent reasoning framework for training universal multi-modal embedding models.
+            PLUME introduces a <b>Latent Mixture-of-Experts (MoE) transition layer</b> that enables vision-language models to perform implicit reasoning in a continuous latent space, rather than relying on explicit chain-of-thought token generation.
+            This approach allows the model to develop richer representations for complex multi-modal understanding tasks including image retrieval, video understanding, and visual document comprehension.
+            Built upon Qwen2-VL-2B, PLUME achieves strong performance on the MMEB benchmark across image, video, and visual document modalities, demonstrating the effectiveness of latent reasoning for multi-modal embedding.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+<!-- End paper abstract -->
+
+
+<!-- Method Overview -->
+<section class="hero is-small">
+  <div class="hero-body">
+    <div class="container is-max-desktop">
+      <h2 class="title is-3 has-text-centered">Method Overview</h2>
+      <div class="columns is-centered has-text-centered">
+        <div class="column is-four-fifths">
+          <div class="content has-text-justified">
+            <p>
+              PLUME extends standard vision-language models with a <b>Latent MoE Transition</b> mechanism.
+              Instead of generating explicit reasoning tokens, the model processes latent thought tokens through a mixture-of-experts layer consisting of 4 routed experts and 1 shared expert.
+              A curriculum learning strategy progressively increases the number of latent reasoning steps during training, enabling the model to develop increasingly sophisticated reasoning capabilities.
+            </p>
+          </div>
+          <!-- TODO: Add method figure here -->
+          <!-- <img src="static/images/method.png" alt="PLUME method overview" loading="lazy"/> -->
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+<!-- End Method Overview -->
+
+
+<!-- Results -->
+<section class="section hero is-light">
+  <div class="hero-body">
+    <div class="container is-max-desktop">
+      <h2 class="title is-3 has-text-centered">Results</h2>
+      <div class="columns is-centered">
+        <div class="column is-four-fifths">
+          <div class="content">
+            <p>PLUME achieves competitive results on the MMEB benchmark across multiple modalities:</p>
+            <table class="table is-bordered is-striped is-hoverable is-fullwidth">
+              <thead>
+                <tr>
+                  <th>Modality</th>
+                  <th>Benchmark</th>
+                  <th>Metric</th>
+                  <th>PLUME</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Image</td>
+                  <td>ImageNet-1K</td>
+                  <td>Hit@1</td>
+                  <td><b>0.735</b></td>
+                </tr>
+                <!-- TODO: Add more results rows -->
+              </tbody>
+            </table>
+            <!-- TODO: Add results figure here -->
+            <!-- <img src="static/images/results.png" alt="PLUME results" loading="lazy"/> -->
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+<!-- End Results -->
+
+
+<!--BibTex citation -->
+<section class="section" id="BibTeX">
+  <div class="container is-max-desktop content">
+    <div class="bibtex-header">
+      <h2 class="title">BibTeX</h2>
+      <button class="copy-bibtex-btn" onclick="copyBibTeX()" title="Copy BibTeX to clipboard">
+        <i class="fas fa-copy"></i>
+        <span class="copy-text">Copy</span>
+      </button>
+    </div>
+    <!-- TODO: Replace with actual BibTeX -->
+    <pre id="bibtex-code"><code>@article{plume2025,
+  title={PLUME: Latent Reasoning for Universal Multi-modal Embedding},
+  author={Author1 and Author2 and Author3},
+  year={2025},
+  url={https://github.com/haoxiangzhao12138/PLUME}
+}</code></pre>
+  </div>
+</section>
+<!--End BibTex citation -->
+
+
+<footer class="footer">
+  <div class="container">
+    <div class="columns is-centered">
+      <div class="column is-8">
+        <div class="content">
+          <p>
+            This page was built using the <a href="https://github.com/eliahuhorwitz/Academic-project-page-template" target="_blank">Academic Project Page Template</a>.
+            Licensed under <a rel="license" href="http://creativecommons.org/licenses/by-sa/4.0/" target="_blank">CC BY-SA 4.0</a>.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</footer>
+
+</main>
+</body>
+</html>
