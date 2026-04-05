@@ -1,28 +1,44 @@
-# PLUME: Latent Reasoning for Universal Multi-modal Embedding
+# PLUME: Latent Reasoning Based Universal Multimodal Embedding
 
-[🏡 Project Page](https://haoxiangzhao12138.github.io/PLUME/) | [📄 Paper](#) | [🤗 Model](https://huggingface.co/CUDAOUTOFMEMORY/PLUME-Qwen2-VL-2B) | [🤗 Training Data](https://huggingface.co/datasets/zhibinlan/UME-sft-train) | [🤗 Eval Data](https://huggingface.co/datasets/TIGER-Lab/MMEB-V2)
+[🏡 Project Page](https://haoxiangzhao12138.github.io/PLUME/) | [📄 Paper](https://arxiv.org/abs/2604.02073) | [🤗 Model](https://huggingface.co/CUDAOUTOFMEMORY/PLUME-Qwen2-VL-2B) | [🤗 Training Data](https://huggingface.co/datasets/zhibinlan/UME-sft-train) | [🤗 Eval Data](https://huggingface.co/datasets/TIGER-Lab/MMEB-V2)
 
-<!-- TODO: Add teaser figure -->
-<!-- ![PLUME](assets/teaser.png) -->
+PLUME is a latent reasoning framework for universal multimodal embedding (UME). It replaces explicit chain-of-thought (CoT) generation with a short autoregressive rollout of continuous latent states, combined with a semantic-anchor-guided transition adapter (Latent MoE) and a progressive explicit-to-latent curriculum. Built on Qwen2-VL-2B, PLUME achieves **61.6** on the 78-task MMEB-v2 benchmark while delivering **over 30x faster inference** compared to explicit-CoT methods.
 
-This repository is the official implementation of the paper [PLUME: Latent Reasoning for Universal Multi-modal Embedding](#).
+<p align="center">
+  <img src="https://haoxiangzhao12138.github.io/PLUME/static/images/tradeoff.png" width="50%" alt="Accuracy-Efficiency Tradeoff"/>
+</p>
+
+This repository is the official implementation of the paper [PLUME: Latent Reasoning Based Universal Multimodal Embedding](https://arxiv.org/abs/2604.02073).
 
 ## 📰 News
 
+- **[2026/04]** Paper released on [arXiv](https://arxiv.org/abs/2604.02073).
 - **[2025]** Code and model weights released.
 
 ## 📝 TODO
 
 - [x] **Code Released**: Training and evaluation pipeline.
 - [x] **Model Released**: Pre-trained [PLUME-Qwen2-VL-2B](https://huggingface.co/CUDAOUTOFMEMORY/PLUME-Qwen2-VL-2B) weights.
-- [ ] **Paper**: Coming soon.
+- [x] **Paper**: [arXiv](https://arxiv.org/abs/2604.02073).
 
 ## 💡 Highlights
 
+- Replaces hundreds of explicit reasoning tokens with only **8 latent steps**, delivering **30.3x faster** inference
+- **61.6** overall on the 78-task MMEB-v2 benchmark, surpassing UME-R1 (60.1) and VLM2Vec-V2 (58.0)
 - **Curriculum-based latent reasoning** -- gradually replaces chain-of-thought text with continuous thought (`<ct>`) tokens across training stages
 - **Contrastive learning** -- cross-device bidirectional contrastive loss for query/positive embedding alignment
 - **Latent MoE** -- Mixture-of-Experts transition layer with 4 routed experts + shared expert in the latent reasoning loop
 - **Multi-modal evaluation** -- MMEB image / video / visdoc evaluation with latent-MoE support
+
+## 🎞️ Results on MMEB-v2
+
+All methods share the same Qwen2-VL-2B backbone.
+
+| Model | Image | Video | VisDoc | All |
+|-------|:-----:|:-----:|:------:|:---:|
+| VLM2Vec-V2 | 64.9 | 34.9 | 65.4 | 58.0 |
+| UME-R1 | 66.6 | 42.2 | 63.9 | 60.1 |
+| **PLUME** | **66.3** | **44.1** | **67.5** | **61.6** |
 
 ## 📦 Model & Data
 
@@ -73,10 +89,6 @@ PLUME/
     └── evaluation.md
 ```
 
-## 🎞️ Results
-
-<!-- TODO: Add results table and figures -->
-
 ## 🫡 Acknowledgements
 
 Many thanks to the code bases from [VLM2Vec](https://github.com/TIGER-AI-Lab/VLM2Vec) and [Qwen2-VL](https://github.com/QwenLM/Qwen2-VL).
@@ -85,12 +97,15 @@ Many thanks to the code bases from [VLM2Vec](https://github.com/TIGER-AI-Lab/VLM
 
 If you use this code for your research or project, please cite:
 
-```latex
-@article{plume2025,
-  title={PLUME: Latent Reasoning for Universal Multi-modal Embedding},
-  author={},
-  year={2025},
-  url={https://github.com/haoxiangzhao12138/PLUME}
+```bibtex
+@misc{he2026plumelatentreasoningbased,
+      title={PLUME: Latent Reasoning Based Universal Multimodal Embedding},
+      author={Chenwei He and Xiangzhao Hao and Tianyu Yang and Yuxiang Ma and Yuheng Jia and Lingxiang Wu and Chaoyang Zhao and Haiyun Guo and Jinqiao Wang},
+      year={2026},
+      eprint={2604.02073},
+      archivePrefix={arXiv},
+      primaryClass={cs.CV},
+      url={https://arxiv.org/abs/2604.02073},
 }
 ```
 
