@@ -30,6 +30,14 @@ This repository is the official implementation of the paper [PLUME: Latent Reaso
 - **Latent MoE** -- Mixture-of-Experts transition layer with 4 routed experts + shared expert in the latent reasoning loop
 - **Multi-modal evaluation** -- MMEB image / video / visdoc evaluation with latent-MoE support
 
+## 🏗️ Method
+
+<p align="center">
+  <img src="https://haoxiangzhao12138.github.io/PLUME/static/images/method.png" width="90%" alt="PLUME Method Overview"/>
+</p>
+
+Overview of PLUME. The bottom panel illustrates the latent rollout process. The top-left panel expands the semantic-anchor-guided transition adapter with shared and specialized experts. The top-right panel shows the progressive explicit-to-latent curriculum.
+
 ## 🎞️ Results on MMEB-v2
 
 All methods share the same Qwen2-VL-2B backbone.
@@ -39,6 +47,12 @@ All methods share the same Qwen2-VL-2B backbone.
 | VLM2Vec-V2 | 64.9 | 34.9 | 65.4 | 58.0 |
 | UME-R1 | 66.6 | 42.2 | 63.9 | 60.1 |
 | **PLUME** | **66.3** | **44.1** | **67.5** | **61.6** |
+
+<p align="center">
+  <img src="https://haoxiangzhao12138.github.io/PLUME/static/images/radar.png" width="50%" alt="Per-task Performance Comparison"/>
+</p>
+
+Per-task performance comparison on MMEB-v2. PLUME consistently outperforms UME-R1 and single-pass baselines across most sub-tasks.
 
 ## 📦 Model & Data
 
