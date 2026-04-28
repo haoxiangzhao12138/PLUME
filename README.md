@@ -95,6 +95,7 @@ PLUME/
 │   ├── train_multinode.sh
 │   ├── launch_multinode.sh
 │   └── eval_plume_moe.sh
+├── VLM2Vec/                            #   Bundled MMEB eval engine with eval_twomode.py
 ├── tools/
 │   └── check_image.py
 └── docs/                               #   Documentation

@@ -1,77 +1,91 @@
 #!/usr/bin/env bash
 set -euo pipefail
-unset LD_LIBRARY_PATH
+
 # ==============================================================================
-# PLUME Latent-MoE — Full Multi-Modal Evaluation
-# Evaluates image / video / visdoc modalities with latent reasoning + MoE support.
+# COCONUT Latent Reasoning — Full Multi-Modal Evaluation
+# Evaluates image / video / visdoc modalities with latent reasoning support.
 #
 # Usage:
-#   bash scripts/eval_plume_moe.sh
+#   bash src/eval/VLM2Vec/experiments/public/eval/eval_coconut_all_modalities.sh
 #
 # Override any variable via environment, e.g.:
-#   CHECKPOINT=output/xxx/checkpoint-400 bash scripts/eval_plume_moe.sh
-#
-# Ablate one or more routed experts (router never selects them; top-k is taken from the rest):
-#   PLUME_LATENT_MOE_EXCLUDE_EXPERTS=2 bash ...   # drop expert index 2 only
-#   PLUME_LATENT_MOE_EXCLUDE_EXPERTS=0,3 bash ... # drop experts 0 and 3
-# Output dir gets a suffix like _exc2 or _exc0-3 so runs do not overwrite.
+#   CHECKPOINT=output/xxx/checkpoint-400 bash eval_coconut_all_modalities.sh
 # ==============================================================================
+#MODALITIES=image \
+# MODALITIES=image DATASET_NAMES="InfographicsVQA" \
+# DATASET_NAMES="ImageNet-1K,N24News,HatefulMemes,VOC2007,SUN397,Place365,ImageNet-A,ImageNet-R,ObjectNet,Country211,OK-VQA,A-OKVQA,DocVQA,InfographicsVQA" \
+# DATASET_NAMES="ChartQA,Visual7W,ScienceQA,VizWiz,GQA,TextVQA,VisDial,CIRR,MSCOCO_t2i,MSCOCO_i2t"
+# DATASET_NAMES="Wiki-SS-NQ,VisualNews_t2i,VisualNews_i2t,FashionIQ,Visual7W-Pointing" \
+# DATASET_NAMES="NIGHTS,WebQA,OVEN,EDIS,MSCOCO,RefCOCO,RefCOCO-Matching" \
+# bash src/eval/VLM2Vec/experiments/public/eval/eval_coconut_all_modalities.sh\
 
+
+# 无ans：
+# CHECKPOINT=/home/guohaiyun/yangtianyu/UME-R1/output/UME-R1-2B-Coconut-Fulldata-NoAns-4node-2026-03-10-10-03-52/checkpoint-1431 \
+# USE_COCONUT_LATENT_REASONING=True \
+# COCONUT_LATENT_STEPS=4 \
+# COCONUT_FORCED_SUFFIX_TEXT="<eot></think><gen_emb>" \
+# bash src/eval/VLM2Vec/experiments/public/eval/eval_coconut_all_modalities.sh
 # ---------- Paths ----------
-PLUME_ROOT="${PLUME_ROOT:-$(cd "$(dirname "$0")/.." && pwd)}"
-# Directory containing eval_twomode.py (the VLM2Vec evaluation engine)
-EVAL_ENGINE_DIR="${EVAL_ENGINE_DIR:-$PLUME_ROOT/VLM2Vec}"
+prefix="${prefix:-/home/guohaiyun/yangtianyu}"
+UME_ROOT="${UME_ROOT:-$prefix/UME-R1}"
 
-CHECKPOINT="${CHECKPOINT:-$PLUME_ROOT/output/checkpoint-latest}"
+CHECKPOINT="${CHECKPOINT:-$UME_ROOT/output/UME-R1-2B-Coconut-Fulldata-NoAns-4node-2026-03-10-10-03-52/checkpoint-1431}"
+# MODEL_BASE: set to empty string to skip (for standalone models), or provide a base model path
 if [[ -z "${MODEL_BASE+x}" ]]; then
-    MODEL_BASE=""
+    # MODEL_BASE not set, use default
+    MODEL_BASE="/home/share/yty_model/Qwen/Qwen2-VL-2B-Instruct"
 fi
+# If MODEL_BASE is explicitly set to empty, keep it empty
 MODEL_BACKBONE="${MODEL_BACKBONE:-qwen2_vl}"
 
-DATA_BASEDIR="${DATA_BASEDIR:-/path/to/vlm2vec_eval/MMEB-V2}"
-OUTPUT_BASEDIR="${OUTPUT_BASEDIR:-$PLUME_ROOT/output/Eval}"
-LOG_DIR="${LOG_DIR:-$PLUME_ROOT/eval_log}"
-
-# ---------- PLUME Latent Config ----------
-USE_PLUME_LATENT_REASONING="${USE_PLUME_LATENT_REASONING:-True}"
-PLUME_LATENT_STEPS="${PLUME_LATENT_STEPS:-8}"
-PLUME_PREFIX_TEXT="${PLUME_PREFIX_TEXT:-<think><bot>}"
-PLUME_FORCED_SUFFIX_TEXT="${PLUME_FORCED_SUFFIX_TEXT:-$'<eot></think>\n<gen_emb>'}"
-
+DATA_BASEDIR="${DATA_BASEDIR:-/home/share/yty_data/vlm2vec_eval/MMEB-V2}"
+OUTPUT_BASEDIR="${OUTPUT_BASEDIR:-$UME_ROOT/output/Eval/UME-R1_2B}"
+LOG_DIR="${LOG_DIR:-$prefix/eval_log}"
+                                                                                                                            
+# ---------- COCONUT Latent Config ----------
+USE_COCONUT_LATENT_REASONING="${USE_COCONUT_LATENT_REASONING:-True}"
+# "auto" = read from trainer_state.json; or set a fixed integer
+COCONUT_LATENT_STEPS="${COCONUT_LATENT_STEPS:-4}"
+COCONUT_PREFIX_TEXT="${COCONUT_PREFIX_TEXT:-<think><bot>}"
+COCONUT_FORCED_SUFFIX_TEXT="${COCONUT_FORCED_SUFFIX_TEXT:=<eot></think>
+<gen_emb>}"
+# Enable detailed token logging (may slow down evaluation)
 DEBUG_LOG_TOKENS="${DEBUG_LOG_TOKENS:-False}"
-
-# ---------- PLUME Latent MoE Config ----------
-USE_PLUME_LATENT_MOE="${USE_PLUME_LATENT_MOE:-True}"
-PLUME_LATENT_MOE_NUM_EXPERTS="${PLUME_LATENT_MOE_NUM_EXPERTS:-4}"
-PLUME_LATENT_MOE_TOP_K="${PLUME_LATENT_MOE_TOP_K:-2}"
-PLUME_LATENT_MOE_USE_SHARED_EXPERT="${PLUME_LATENT_MOE_USE_SHARED_EXPERT:-True}"
-PLUME_LATENT_MOE_STEP_EMBED_MAX_STEPS="${PLUME_LATENT_MOE_STEP_EMBED_MAX_STEPS:-32}"
-PLUME_LATENT_MOE_CONTEXT_TYPE="${PLUME_LATENT_MOE_CONTEXT_TYPE:-disc}"
-# Comma-separated routed expert indices (0..num_experts-1) to mask out at eval; empty = no mask.
-PLUME_LATENT_MOE_EXCLUDE_EXPERTS="${PLUME_LATENT_MOE_EXCLUDE_EXPERTS:-}"
 
 # ---------- Eval Config ----------
 CUDA_VISIBLE_DEVICES="${CUDA_VISIBLE_DEVICES:-0,1,2,3,4,5,6,7}"
 NPROC_PER_NODE="${NPROC_PER_NODE:-8}"
+# Latent reasoning requires batch_size=1 for gen mode
 GEN_BATCH_SIZE=1
+# disc mode can use larger batch
 DISC_BATCH_SIZE="${DISC_BATCH_SIZE:-4}"
-MAX_NEW_TOKENS="${MAX_NEW_TOKENS:-4096}"
+MAX_NEW_TOKENS="${MAX_NEW_TOKENS:-1024}"
+# Align with training defaults (28*28*576=451584, 28*28*16=12544)
 RESIZE_MAX_PIXELS="${RESIZE_MAX_PIXELS:-2359296}"
 RESIZE_MIN_PIXELS="${RESIZE_MIN_PIXELS:-784}"
 MAX_LEN="${MAX_LEN:-11288}"
 
 FORCE_REEVAL="${FORCE_REEVAL:-False}"
+
+# Filter specific datasets (comma-separated). Empty = all datasets in yaml.
 DATASET_NAMES="${DATASET_NAMES:-}"
 
+# Modalities and their yaml configs
+# Override via env: MODALITIES="image" or MODALITIES="image,video"
 if [[ -n "${MODALITIES:-}" ]]; then
     IFS=',' read -r -a MODALITIES <<< "${MODALITIES}"
 else
     declare -a MODALITIES=("image" "video" "visdoc")
 fi
 
+# qry_mode / tgt_mode: gen or disc
 QRY_MODE="${QRY_MODE:-gen}"
 TGT_MODE="${TGT_MODE:-gen}"
 
+# ==============================================================================
+# Auto-detect latent steps from trainer_state.json
+# ==============================================================================
 resolve_latent_steps() {
     local ckpt_path="$1"
     local requested="$2"
@@ -105,58 +119,42 @@ for item in reversed(state.get("log_history", [])):
 print(latent)
 PYEOF
     )"
-    echo "[AUTO] Detected PLUME_LATENT_STEPS=${steps} from ${trainer_state_path}" >&2
+    echo "[AUTO] Detected COCONUT_LATENT_STEPS=${steps} from ${trainer_state_path}" >&2
     echo "${steps}"
 }
 
-LATENT_STEPS="$(resolve_latent_steps "${CHECKPOINT}" "${PLUME_LATENT_STEPS}")"
-USE_LATENT_FLAG="${USE_PLUME_LATENT_REASONING}"
-USE_LATENT_MOE_FLAG="${USE_PLUME_LATENT_MOE}"
+LATENT_STEPS="$(resolve_latent_steps "${CHECKPOINT}" "${COCONUT_LATENT_STEPS}")"
 
+# Determine if latent reasoning should actually be enabled
+# (if latent_steps=0 and use_coconut=True, the latent loop is a no-op but
+#  the prefix/suffix injection and <gen_emb> extraction still apply)
+USE_LATENT_FLAG="${USE_COCONUT_LATENT_REASONING}"
+
+# ==============================================================================
+# Derived paths
+# ==============================================================================
 RUN_TAG="$(basename "$(dirname "${CHECKPOINT}")")/$(basename "${CHECKPOINT}")"
 RUN_TAG_FLAT="$(echo "${RUN_TAG}" | tr '/' '_')"
-if [[ -n "${PLUME_LATENT_MOE_EXCLUDE_EXPERTS}" ]]; then
-    RUN_TAG_FLAT="${RUN_TAG_FLAT}_exc$(echo "${PLUME_LATENT_MOE_EXCLUDE_EXPERTS}" | tr ',' '-')"
-fi
 
+cd "${UME_ROOT}/src/eval/VLM2Vec" || exit 1
 mkdir -p "${LOG_DIR}"
 
-if [[ ! -f "${EVAL_ENGINE_DIR}/eval_twomode.py" ]]; then
-    echo "ERROR: eval_twomode.py not found in EVAL_ENGINE_DIR=${EVAL_ENGINE_DIR}"
-    echo "       Set EVAL_ENGINE_DIR to a VLM2Vec eval engine directory, or use the bundled VLM2Vec."
-    exit 1
-fi
-
-cd "${EVAL_ENGINE_DIR}" || { echo "ERROR: cannot cd to EVAL_ENGINE_DIR=${EVAL_ENGINE_DIR}"; exit 1; }
-
+# ==============================================================================
+# Main loop
+# ==============================================================================
 echo "============================================================"
-echo "  PLUME Latent-MoE Multi-Modal Evaluation"
+echo "  COCONUT Multi-Modal Evaluation"
 echo "============================================================"
 echo "  Checkpoint    : ${CHECKPOINT}"
 echo "  Base model    : ${MODEL_BASE}"
 echo "  Backbone      : ${MODEL_BACKBONE}"
 if [[ "${USE_LATENT_FLAG,,}" == "true" ]]; then
     echo "  Latent        : ${USE_LATENT_FLAG} (steps=${LATENT_STEPS})"
-    echo "  Prefix        : ${PLUME_PREFIX_TEXT}"
-    echo "  Suffix        : ${PLUME_FORCED_SUFFIX_TEXT}"
+    echo "  Prefix        : ${COCONUT_PREFIX_TEXT}"
+    echo "  Suffix        : ${COCONUT_FORCED_SUFFIX_TEXT}"
     echo "  Debug logging : ${DEBUG_LOG_TOKENS}"
-    if [[ "${USE_LATENT_MOE_FLAG,,}" == "true" ]]; then
-        echo "  Latent-MoE    : ${USE_LATENT_MOE_FLAG}"
-        echo "    num_experts : ${PLUME_LATENT_MOE_NUM_EXPERTS}"
-        echo "    top_k       : ${PLUME_LATENT_MOE_TOP_K}"
-        echo "    shared      : ${PLUME_LATENT_MOE_USE_SHARED_EXPERT}"
-        echo "    step_max    : ${PLUME_LATENT_MOE_STEP_EMBED_MAX_STEPS}"
-        echo "    context     : ${PLUME_LATENT_MOE_CONTEXT_TYPE}"
-        if [[ -n "${PLUME_LATENT_MOE_EXCLUDE_EXPERTS}" ]]; then
-            echo "    exclude_experts: ${PLUME_LATENT_MOE_EXCLUDE_EXPERTS}"
-        else
-            echo "    exclude_experts: (none)"
-        fi
-    else
-        echo "  Latent-MoE    : ${USE_LATENT_MOE_FLAG} (disabled)"
-    fi
 else
-    echo "  Latent        : ${USE_LATENT_FLAG} (disabled, latent/moe params ignored)"
+    echo "  Latent        : ${USE_LATENT_FLAG} (disabled, latent params ignored)"
 fi
 echo "  Modalities    : ${MODALITIES[*]}"
 echo "  qry/tgt mode  : ${QRY_MODE}/${TGT_MODE}"
@@ -165,9 +163,9 @@ echo "  Resize pixels : ${RESIZE_MIN_PIXELS} ~ ${RESIZE_MAX_PIXELS}"
 echo "============================================================"
 
 for MODALITY in "${MODALITIES[@]}"; do
-    DATA_CONFIG_PATH="${PLUME_ROOT}/configs/eval/${MODALITY}.yaml"
+    DATA_CONFIG_PATH="${UME_ROOT}/src/eval/VLM2Vec/experiments/public/eval/${MODALITY}.yaml"
     OUTPUT_PATH="${OUTPUT_BASEDIR}/${RUN_TAG_FLAT}/${MODALITY}-${QRY_MODE}"
-    LOG_PATH="${LOG_DIR}/${RUN_TAG_FLAT}_${MODALITY}_${QRY_MODE}_moe.log"
+    LOG_PATH="${LOG_DIR}/${RUN_TAG_FLAT}_${MODALITY}_${QRY_MODE}.log"
 
     if [[ ! -f "${DATA_CONFIG_PATH}" ]]; then
         echo "[SKIP] Config not found: ${DATA_CONFIG_PATH}"
@@ -176,12 +174,14 @@ for MODALITY in "${MODALITIES[@]}"; do
 
     mkdir -p "${OUTPUT_PATH}"
 
+    # Determine batch size: latent gen mode requires bs=1
     if [[ "${QRY_MODE}" == "gen" ]] && [[ "${USE_LATENT_FLAG,,}" == "true" ]]; then
         BATCH_SIZE="${GEN_BATCH_SIZE}"
     else
         BATCH_SIZE="${DISC_BATCH_SIZE}"
     fi
 
+    # Force re-eval: remove cached outputs
     if [[ "${FORCE_REEVAL,,}" == "true" ]]; then
         echo "[FORCE_REEVAL] Cleaning cached outputs in ${OUTPUT_PATH}..."
         find "${OUTPUT_PATH}" -maxdepth 1 \( -name "*_score.json" -o -name "*_pred.jsonl" -o -name "*_info.jsonl" -o -name "*_qry" -o -name "*_tgt" \) -exec rm -rf {} +
@@ -204,8 +204,6 @@ for MODALITY in "${MODALITIES[@]}"; do
         extra_args+=(--dataset_names "${DATASET_NAMES}")
     fi
 
-    # NOTE: CLI arg names (--use_coconut_*, --coconut_*) must match the
-    # eval_twomode.py dataclass field names in the VLM2Vec eval engine.
     PYTHONUNBUFFERED=1 \
     CUDA_VISIBLE_DEVICES="${CUDA_VISIBLE_DEVICES}" \
     torchrun \
@@ -226,24 +224,17 @@ for MODALITY in "${MODALITIES[@]}"; do
         --tgt_mode "${TGT_MODE}" \
         --use_coconut_latent_reasoning "${USE_LATENT_FLAG}" \
         --coconut_latent_steps "${LATENT_STEPS}" \
-        --coconut_prefix_text "${PLUME_PREFIX_TEXT}" \
-        --coconut_forced_suffix_text "${PLUME_FORCED_SUFFIX_TEXT}" \
+        --coconut_prefix_text "${COCONUT_PREFIX_TEXT}" \
+        --coconut_forced_suffix_text "${COCONUT_FORCED_SUFFIX_TEXT}" \
         --debug_log_tokens "${DEBUG_LOG_TOKENS}" \
-        --use_coconut_latent_moe "${USE_LATENT_MOE_FLAG}" \
-        --coconut_latent_moe_num_experts "${PLUME_LATENT_MOE_NUM_EXPERTS}" \
-        --coconut_latent_moe_top_k "${PLUME_LATENT_MOE_TOP_K}" \
-        --coconut_latent_moe_use_shared_expert "${PLUME_LATENT_MOE_USE_SHARED_EXPERT}" \
-        --coconut_latent_moe_step_embed_max_steps "${PLUME_LATENT_MOE_STEP_EMBED_MAX_STEPS}" \
-        --coconut_latent_moe_context_type "${PLUME_LATENT_MOE_CONTEXT_TYPE}" \
-        --coconut_latent_moe_exclude_experts "${PLUME_LATENT_MOE_EXCLUDE_EXPERTS}" \
         "${extra_args[@]}" \
         2>&1 | tee -a "${LOG_PATH}"
 
-    echo "  Done: ${MODALITY}"
+    echo "  ✅ ${MODALITY} done."
 done
 
 echo ""
 echo "============================================================"
-echo "  All modalities evaluated."
+echo "  ✅ All modalities evaluated."
 echo "  Results in: ${OUTPUT_BASEDIR}/${RUN_TAG_FLAT}/"
 echo "============================================================"
